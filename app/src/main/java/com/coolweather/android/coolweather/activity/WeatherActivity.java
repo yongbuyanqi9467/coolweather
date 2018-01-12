@@ -1,5 +1,6 @@
 package com.coolweather.android.coolweather.activity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
@@ -23,6 +24,7 @@ import com.bumptech.glide.Glide;
 import com.coolweather.android.coolweather.R;
 import com.coolweather.android.coolweather.gson.Forecast;
 import com.coolweather.android.coolweather.gson.Weather;
+import com.coolweather.android.coolweather.service.AutoUpdateService;
 import com.coolweather.android.coolweather.util.HttpUtil;
 import com.coolweather.android.coolweather.util.Utility;
 
@@ -188,6 +190,8 @@ public class WeatherActivity extends AppCompatActivity {
     }
 
     private void showWeatherInfo(Weather weather) {
+
+
         String cityName = weather.basic.cityName;
         String updateTime = weather.basic.update.updateTime.split(" ")[1];
         String degree = weather.now.temperature + "°C";
@@ -197,6 +201,10 @@ public class WeatherActivity extends AppCompatActivity {
         degreeText.setText(degree);
         weatherInfoText.setText(weatherInfo);
         forecastLayout.removeAllViews();
+
+        weatherLayout.setVisibility(View.VISIBLE);
+        Intent intent = new Intent(this, AutoUpdateService.class);
+        startService(intent);
         for(Forecast forecast : weather.forecastList) {
             Log.e(TAG, forecast + "" );
             View view = LayoutInflater.from(this).inflate(R.layout.forecast_item,forecastLayout,false);
