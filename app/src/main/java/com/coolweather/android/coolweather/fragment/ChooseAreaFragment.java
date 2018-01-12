@@ -17,11 +17,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.coolweather.android.coolweather.MainActivity;
 import com.coolweather.android.coolweather.R;
 import com.coolweather.android.coolweather.activity.WeatherActivity;
 import com.coolweather.android.coolweather.db.City;
 import com.coolweather.android.coolweather.db.County;
 import com.coolweather.android.coolweather.db.Province;
+import com.coolweather.android.coolweather.gson.Weather;
 import com.coolweather.android.coolweather.util.HttpUtil;
 import com.coolweather.android.coolweather.util.Utility;
 
@@ -86,11 +88,21 @@ public class ChooseAreaFragment extends Fragment {
                     queryCounties();
                 }else if(currentLevel == LEVEL_COUNTY){
                     String weatherId = countyList.get(position).getWeatherId();
-                    Intent intent = new Intent(getActivity(), WeatherActivity.class);
-                    Log.e(TAG, weatherId);
-                    intent.putExtra("weather_id",weatherId);
-                    startActivity(intent);
-                    getActivity().finish();
+
+                    if(getActivity() instanceof MainActivity) {
+                        Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                        Log.e(TAG, weatherId);
+                        intent.putExtra("weather_id",weatherId);
+                        startActivity(intent);
+                        getActivity().finish();
+                    }else if(getActivity() instanceof WeatherActivity) {
+                        WeatherActivity activity = (WeatherActivity) getActivity();
+                        activity.drawerLayout.closeDrawers();
+                        activity.swipeRefresh.setRefreshing(true);
+                        activity.requestWeather(weatherId);
+                    }
+
+
 
                 }
             }
